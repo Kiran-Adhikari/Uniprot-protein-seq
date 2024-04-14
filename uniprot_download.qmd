@@ -1,0 +1,53 @@
+---
+title: "protein sequences download using Uniprot"
+format: html
+editor: visual
+author: Kiran
+---
+
+## Data Collections:
+
+Using Library `UniprotR` data of protein sequence were collected.
+
+```{r}
+library(UniprotR)
+
+# Using Uniprot ID to get sequences
+List_of_seque_to_retrive <- c("P42694", "Q6FHJ7")
+
+#Retrive the names/identifier for sequence 
+Uniprot_name <- GetNamesTaxa(List_of_seque_to_retrive)
+
+#Retrive the sequences
+Uniprot_seq <- GetSequences(List_of_seque_to_retrive)
+
+#Get protein informations 
+# (For example we can get protein function as well)
+Uniprot_fun <- GetProteinFunction(List_of_seque_to_retrive)
+
+```
+
+Combining Information from Uniprot_name and Uniprot_seq: Protein name and Sequence
+
+```{r}
+# The row names are the accession number. 
+Uniprot_name$Accession <- row.names(Uniprot_name)
+Uniprot_seq$Accession <- row.names(Uniprot_seq)
+
+# Keep only the Accession number and protein name  from Uniprot_name
+
+Colsto_keep_names <-c("Accession","Protein.names")
+Uniprot_Name_clean <- Uniprot_name[Colsto_keep_names]
+
+
+#Keep only the Accession  and Sequence from Uniprot_seq
+Colsto_keep_Seq <- c ("Accession", "Sequence")
+Uniprot_seq_clean <- Uniprot_seq[Colsto_keep_Seq]
+
+# Create New DataFrame that is merged version of the Protein name Accession  and the sequences. 
+DF_uniprot <- merge(Uniprot_Name_clean, Uniprot_seq_clean, by = "Accession")
+
+
+# View Sequences in our data_frame
+DF_uniprot$Sequence
+```
